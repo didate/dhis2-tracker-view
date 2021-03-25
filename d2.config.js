@@ -1,4 +1,5 @@
 const config = {
+    title: 'Tracker View',
     type: 'app',
 
     entryPoints: {
