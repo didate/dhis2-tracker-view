@@ -2,7 +2,8 @@ import { useDataEngine } from '@dhis2/app-runtime'
 import { PropTypes } from '@dhis2/prop-types'
 import { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
-import { fetchProgram } from '../redux/actions/'
+import { fetchProgram, fetchTeis } from '../redux/actions/'
+import ListTei from './ui/ListTei'
 import {
     ReactFinalForm,
     SingleSelectFieldFF,
@@ -10,10 +11,9 @@ import {
 
 } from '@dhis2/ui'
 import { CircularLoader, LinearLoader } from '@dhis2/ui-core'
-import { Grid } from '@material-ui/core'
 import Widget from '../components/widget'
 
-const TrackerView = ({ fetchProgram, programs, loading }) => {
+const TrackerView = ({ fetchProgram, fetchTeis, programs, teis, loading }) => {
 
     const engine = useDataEngine()
     const { Field } = ReactFinalForm
@@ -22,6 +22,9 @@ const TrackerView = ({ fetchProgram, programs, loading }) => {
     const alertValues = values => {
         const formattedValuesString = JSON.stringify(values, null, 2)
         alert(formattedValuesString)
+    }
+    const handleChange = e => {
+        fetchTeis(engine, e.target.value);
     }
 
     useEffect(() => {
@@ -32,47 +35,59 @@ const TrackerView = ({ fetchProgram, programs, loading }) => {
 
         <div className="container">
             <div className="row">
-                Hello
+                <div className="col-sm-2">
+                    <h1>Form</h1>
+                    <select name="program" id="program" onChange={handleChange} >
+                        {programs.map((item) => {
+                            return <option key={item.value} value={item.value}>{item.label}</option>
+                        })}
+                    </select>
+                </div>
+                {/*  <ReactFinalForm.Form onSubmit={alertValues}>
+                    {({ handleSubmit }) => (
+                        <form onSubmit={handleSubmit}>
+                            <div>
+                                <Field
+                                    name="title"
+                                    label="Title"
+                                    initialValue='none'
+                                    component={SingleSelectFieldFF}
+                                    options={programs}
+
+                                />
+                            </div>
+
+                            <div>
+                                <Button type="submit" primary>
+                                    Submit form
+                        </Button>
+                            </div>
+
+                        </form>
+                    )}
+                </ReactFinalForm.Form> */}
             </div>
             <div className="row">
-                <Widget title="Hello">
-                    je suis une widget
-                </Widget>
+                {teis ? <ListTei teis={teis} /> : <div>No data</div>}
             </div>
         </div>
-        <h1>Form</h1>
-        <ReactFinalForm.Form onSubmit={alertValues}>
-            {({ handleSubmit }) => (
-                <form onSubmit={handleSubmit}>
-                    <div>
-                        <Field
-                            name="title"
-                            label="Title"
-                            initialValue='none'
-                            component={SingleSelectFieldFF}
-                            options={programs}
-                        />
-                    </div>
 
-                    <div>
-                        <Button type="submit" primary>
-                            Submit form
-                        </Button>
-                    </div>
 
-                </form>
-            )}
-        </ReactFinalForm.Form>
+
+
+
     </div>
 }
 
 
 TrackerView.propTypes = {
-    fetchProgram: PropTypes.func.isRequired
+    fetchProgram: PropTypes.func.isRequired,
+    fetchTeis: PropTypes.func.isRequired
 }
 const mapStateToProps = state => ({
     programs: state.program.data,
-    loading: state.program.loading
+    loading: state.program.loading,
+    teis: state.tei.data
 })
 
-export default connect(mapStateToProps, { fetchProgram })(TrackerView)
+export default connect(mapStateToProps, { fetchProgram, fetchTeis })(TrackerView)

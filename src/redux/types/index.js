@@ -1,2 +1,5 @@
 export const FETCH_PROGRAMS = 'FETCH_PROGRAMS'
 export const RECEIVE_PROGRAMS = 'RECEIVE_PROGRAMS'
+
+export const FETCH_TEI = 'FETCH_TEI'
+export const RECEIVE_TEI = 'RECEIVE_TEI'
